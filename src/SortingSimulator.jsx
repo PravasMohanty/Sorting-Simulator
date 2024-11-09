@@ -198,6 +198,55 @@ const SortingSimulator = () => {
         }
     };
 
+    // Heap Sort
+    const heapify = async (arr, n, i) => {
+        let largest = i; // Initialize largest as root
+        const left = 2 * i + 1; // left = 2*i + 1
+        const right = 2 * i + 2; // right = 2*i + 2
+
+        if (left < n) {
+            setComparingIndices([largest, left]);
+            await sleep(50);
+            if (arr[left] > arr[largest]) {
+                largest = left;
+            }
+        }
+
+        if (right < n) {
+            setComparingIndices([largest, right]);
+            await sleep(50);
+            if (arr[right] > arr[largest]) {
+                largest = right;
+            }
+        }
+
+        if (largest !== i) {
+            [arr[i], arr[largest]] = [arr[largest], arr[i]];
+            setArray([...arr]);
+            setSwappedIndices([i, largest]);
+            await sleep(50);
+            await heapify(arr, n, largest);
+        }
+    };
+
+    const heapSort = async () => {
+        let arr = [...array];
+        const n = arr.length;
+
+        for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+            await heapify(arr, n, i);
+        }
+
+        for (let i = n - 1; i > 0; i--) {
+            [arr[0], arr[i]] = [arr[i], arr[0]];
+            setArray([...arr]);
+            setSwappedIndices([0, i]);
+            await sleep(50);
+            await heapify(arr, i, 0);
+        }
+        markArraySorted();
+    };
+
     const startSorting = async () => {
         setIsSorting(true);
         try {
@@ -217,6 +266,9 @@ const SortingSimulator = () => {
                     break;
                 case 'Quick Sort':
                     await quickSort(arr, 0, arr.length - 1);
+                    break;
+                case 'Heap Sort':
+                    await heapSort();
                     break;
                 default:
                     break;
@@ -250,6 +302,7 @@ const SortingSimulator = () => {
                             <option value="Insertion Sort">Insertion Sort</option>
                             <option value="Merge Sort">Merge Sort</option>
                             <option value="Quick Sort">Quick Sort</option>
+                            <option value="Heap Sort">Heap Sort</option>
                         </select>
                     </div>
 
